@@ -14,7 +14,25 @@ jobs:
             out_name: DrinkRuntimeEnvironment-mac
     steps:
     - uses: actions/checkout@v4
-    - run: gcc drink_vm.c -o ${{ matrix.out_name }} -static
+    
+    # Устанавливаем компилятор для Windows (для Linux и Mac он уже есть)
+    - name: Setup MinGW (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        choco install mingw -y
+        echo "C:\ProgramData\chocolatey\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        
+    # Компилируем (для Windows используем gcc, для Mac clang, для Linux gcc)
+    - name: Compile DRE
+      run: |
+        if [ "${{ matrix.os }}" = "macos-latest" ]; then
+          clang drink_vm.c -o ${{ matrix.out_name }} -static
+        else
+          gcc drink_vm.c -o ${{ matrix.out_name }} -static
+        fi
+      shell: bash
+
+    # Загружаем готовый файл
     - uses: actions/upload-artifact@v4
       with:
         name: DRE-${{ matrix.os }}
