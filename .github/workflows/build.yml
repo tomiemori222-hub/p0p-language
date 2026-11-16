@@ -26,7 +26,7 @@ jobs:
     - name: Compile DRE
       run: |
         if [ "${{ matrix.os }}" = "macos-latest" ]; then
-          clang drink_vm.c -o ${{ matrix.out_name }} -static
+          clang drink_vm.c -o ${{ matrix.out_name }}
         else
           gcc drink_vm.c -o ${{ matrix.out_name }} -static
         fi
