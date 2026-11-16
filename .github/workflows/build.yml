@@ -1,0 +1,21 @@
+name: Build Drink Runtime (DRE)
+on: [push]
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            out_name: DrinkRuntimeEnvironment.exe
+          - os: ubuntu-latest
+            out_name: DrinkRuntimeEnvironment-linux
+          - os: macos-latest
+            out_name: DrinkRuntimeEnvironment-mac
+    steps:
+    - uses: actions/checkout@v4
+    - run: gcc drink_vm.c -o ${{ matrix.out_name }} -static
+    - uses: actions/upload-artifact@v4
+      with:
+        name: DRE-${{ matrix.os }}
+        path: ${{ matrix.out_name }}
